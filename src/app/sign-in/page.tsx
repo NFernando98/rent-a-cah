@@ -18,9 +18,9 @@ export default function SignIn() {
         setError('');
         try {
             // Firebase Email/Password Authentication
-            await signInWithEmailAndPassword(auth, email, password);
-            console.log('Successfully signed in with credentials');
-
+            const res = await signInWithEmailAndPassword(auth, email, password);
+            console.log('Successfully signed in with credentials', { res });
+            console.log({ res });
             router.push('/')
         } catch (err: any) {
             setError('Failed to sign in. Check your credentials.');

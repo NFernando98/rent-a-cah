@@ -22,7 +22,7 @@ const firebaseConfig = {
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
-const googleProvider = new GoogleAuthProvider();
+export const googleProvider = new GoogleAuthProvider();
 
 // Initialize messaging only in the client
-export { app, db, auth, googleProvider };
+export { app, db, auth };

@@ -46,7 +46,13 @@ export default function SignIn() {
             >
                 <h2 className="text-2xl font-bold mb-4">Sign in</h2>
                 <p className="text-gray-600 mb-6">
-                    or <a href="#" className="text-blue-500">create an account</a>
+                    or{' '}
+                    <button
+                        onClick={() => router.push('/sign-up')}
+                        className="text-blue-500 underline"
+                    >
+                        create an account
+                    </button>
                 </p>
 
                 {/* Email Input */}

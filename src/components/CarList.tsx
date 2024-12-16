@@ -1,12 +1,12 @@
-// components/CarList.js
-import React from 'react';
+import React from "react";
+import Image from "next/image";
 
 const cars = [
   {
     id: 1,
     name: "BMW 3 Series 2013",
     price: 276,
-    image: "/images/bmw-3-series.jpg",
+    image: "/bmw.png",
     seats: 5,
     transmission: "Automatic",
     mileage: "Unlimited mileage",
@@ -15,7 +15,7 @@ const cars = [
     id: 2,
     name: "Jeep Wrangler 4xe 2022",
     price: 448,
-    image: "/images/jeep-wrangler.jpg",
+    image: "/jeep.png",
     seats: 5,
     transmission: "Automatic",
     mileage: "Unlimited mileage",
@@ -24,7 +24,7 @@ const cars = [
     id: 3,
     name: "Tesla Model X 2017",
     price: 435,
-    image: "/images/tesla-model-x.jpg",
+    image: "/tesla.png",
     seats: 5,
     transmission: "Automatic",
     mileage: "Unlimited mileage",
@@ -33,27 +33,46 @@ const cars = [
 
 export default function CarList() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="w-full max-w-screen-2xl mx-auto mt-6 px-6 space-y-6">
       {cars.map((car) => (
         <div
           key={car.id}
-          className="bg-white rounded shadow overflow-hidden border border-gray-200"
+          className="flex bg-white shadow-md rounded-lg overflow-hidden h-64 border border-gray-200"
         >
-          <img
-            src={car.image}
-            alt={car.name}
-            className="w-full h-48 object-cover"
-          />
-          <div className="p-4">
-            <h3 className="text-lg font-semibold mb-2">{car.name}</h3>
-            <p className="text-gray-700 text-sm mb-1">Seats: {car.seats}</p>
-            <p className="text-gray-700 text-sm mb-1">Transmission: {car.transmission}</p>
-            <p className="text-gray-700 text-sm mb-2">{car.mileage}</p>
-            <div className="flex justify-between items-center">
-              <span className="text-xl font-bold text-gray-900">CA ${car.price} total</span>
-              <button className="bg-yellow-500 text-black px-4 py-2 rounded">
+          {/* Left Section: Car Image */}
+          <div className="relative w-1/3 h-full">
+            <Image
+              src={car.image}
+              alt={car.name}
+              layout="fill"
+              objectFit="cover"
+            />
+          </div>
+
+          {/* Middle Section: Car Details */}
+          <div className="w-1/3 flex items-center justify-start px-8">
+            <div>
+              <h3 className="text-3xl font-extrabold text-gray-900 mb-4">
+                {car.name}
+              </h3>
+              <div className="flex text-gray-700 space-x-8 text-2xl font-semibold mb-2">
+                <span>👤 {car.seats}</span>
+                <span>{car.transmission}</span>
+              </div>
+              <p className="text-gray-600 text-2xl">{car.mileage}</p>
+            </div>
+          </div>
+
+          {/* Right Section: Price and Reserve Button */}
+          <div className="w-1/3 flex items-center justify-center text-center px-8">
+            <div>
+              <span className="text-2xl font-extrabold text-gray-900 block mb-4">
+                CA ${car.price} total
+              </span>
+              <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-6 rounded-lg text-xl">
                 Reserve
               </button>
+
             </div>
           </div>
         </div>

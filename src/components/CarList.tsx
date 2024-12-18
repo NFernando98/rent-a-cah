@@ -1,6 +1,15 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
 
+// Car data
 const cars = [
   {
     id: 1,
@@ -10,6 +19,7 @@ const cars = [
     seats: 5,
     transmission: "Automatic",
     mileage: "Unlimited mileage",
+    extraInfo: "This is a sporty and comfortable sedan with great handling.",
   },
   {
     id: 2,
@@ -19,6 +29,7 @@ const cars = [
     seats: 5,
     transmission: "Automatic",
     mileage: "Unlimited mileage",
+    extraInfo: "An off-road beast with hybrid capabilities and a rugged design.",
   },
   {
     id: 3,
@@ -28,55 +39,66 @@ const cars = [
     seats: 5,
     transmission: "Automatic",
     mileage: "Unlimited mileage",
+    extraInfo: "A futuristic electric SUV with falcon-wing doors and autopilot.",
   },
 ];
 
 export default function CarList() {
   return (
-    <div className="w-full max-w-screen-2xl mx-auto mt-6 px-6 space-y-6">
-      {cars.map((car) => (
-        <div
-          key={car.id}
-          className="flex bg-white shadow-md rounded-lg overflow-hidden h-64 border border-gray-200"
-        >
-          {/* Left Section: Car Image */}
-          <div className="relative w-1/3 h-full">
-            <Image
-              src={car.image}
-              alt={car.name}
-              layout="fill"
-              objectFit="cover"
-            />
-          </div>
-
-          {/* Middle Section: Car Details */}
-          <div className="w-1/3 flex items-center justify-start px-8">
-            <div>
-              <h3 className="text-3xl font-extrabold text-gray-900 mb-4">
-                {car.name}
-              </h3>
-              <div className="flex text-gray-700 space-x-8 text-2xl font-semibold mb-2">
-                <span>👤 {car.seats}</span>
-                <span>{car.transmission}</span>
+    <div className="w-full max-w-[90rem] mx-auto p-4">
+      {/* Accordion container */}
+      <Accordion type="single" collapsible>
+        {cars.map((car) => (
+          <AccordionItem
+            key={car.id}
+            value={`item-${car.id}`}
+            className="border rounded-lg shadow mb-4"
+          >
+            {/* Car row (collapsed view) */}
+            <AccordionTrigger className="p-4 flex items-center justify-between gap-4 w-full">
+              {/* Car Image */}
+              <div className="w-1/4">
+                <Image
+                  src={car.image}
+                  alt={car.name}
+                  width={300}
+                  height={200}
+                  className="rounded-lg object-cover"
+                />
               </div>
-              <p className="text-gray-600 text-2xl">{car.mileage}</p>
-            </div>
-          </div>
 
-          {/* Right Section: Price and Reserve Button */}
-          <div className="w-1/3 flex items-center justify-center text-center px-8">
-            <div>
-              <span className="text-2xl font-extrabold text-gray-900 block mb-4">
-                CA ${car.price} total
-              </span>
-              <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-6 rounded-lg text-xl">
-                Reserve
-              </button>
+              {/* Car Details */}
+              <div className="w-1/2 text-left">
+                <h3 className="text-3xl font-bold">{car.name}</h3>
+                <p className="text-gray-600 text-sm">
+                  👤 {car.seats} Seats
+                </p>
+                <p className="text-gray-600 text-sm">
+                  ⚙️ {car.transmission}
+                </p>
+                <p className="text-gray-600 text-sm">
+                  🛣️{" "}{car.mileage}
+                </p>
+              </div>
 
-            </div>
-          </div>
-        </div>
-      ))}
+              {/* Price and Reserve Button */}
+              <div className="w-1/4 text-center flex flex-col justify-center items-center">
+                <span className="text-2xl font-semibold mb-2">CA ${car.price}</span>
+                <div className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-4 rounded cursor-pointer text-sm">
+                  Reserve
+                </div>
+              </div>
+            </AccordionTrigger>
+
+            {/* Expanded Content */}
+            <AccordionContent>
+              <div className="p-4 border-t text-gray-700 text-lg">
+                <p>{car.extraInfo}</p>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
     </div>
   );
 }

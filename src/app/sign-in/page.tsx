@@ -32,6 +32,7 @@ export default function SignIn() {
         try {
             const result = await signInWithPopup(auth, googleProvider);
             console.log('Google sign-in success:', result.user);
+            router.push('/')
         } catch (error: any) {
             console.error('Google sign-in error:', error.message);
         }

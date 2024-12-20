@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import FilterBar from '@/components/FilterBar';
 import CarList from '@/components/CarList';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -20,6 +20,27 @@ export default function Home() {
       console.error('Error signing out:', error.message);
     }
   };
+
+  useEffect(() => {
+    const fetchCars = async () => {
+      try {
+        const response = await fetch('/api/car/', {
+          method: 'GET',
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json(); // Parse the JSON response
+        console.log("this is the data", data)
+        
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchCars();
+  }, []); // Empty dependency array to run once on mount
 
   return (
     <main className="bg-gray-100 min-h-screen">

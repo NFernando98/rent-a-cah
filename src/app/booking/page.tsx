@@ -16,6 +16,7 @@ export default function BookingPage() {
     // Parse the car data
     const car = carData ? JSON.parse(decodeURIComponent(carData)) : null;
 
+    // Re-route to car list
     const handleSelectCarClick = () => {
         router.push("/");
     };

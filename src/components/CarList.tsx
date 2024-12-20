@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   Accordion,
   AccordionItem,
@@ -44,6 +45,14 @@ const cars = [
 ];
 
 export default function CarList() {
+  const router = useRouter();
+
+  // Function to handle navigation to booking page
+  const handleReserve = (car: any) => {
+    const carData = encodeURIComponent(JSON.stringify(car));
+    router.push(`/booking?car=${carData}`);
+  };
+
   return (
     <div className="w-full max-w-[90rem] mx-auto p-4">
       {/* Accordion container */}
@@ -84,7 +93,9 @@ export default function CarList() {
               {/* Price and Reserve Button */}
               <div className="w-1/4 text-center flex flex-col justify-center items-center">
                 <span className="text-2xl font-semibold mb-2">CA ${car.price}</span>
-                <div className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-4 rounded cursor-pointer text-sm">
+                <div
+                  onClick={() => handleReserve(car)}
+                  className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-4 rounded cursor-pointer text-sm">
                   Reserve
                 </div>
               </div>

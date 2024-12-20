@@ -14,7 +14,7 @@ export default function Home() {
       <header className="bg-black text-white py-4">
         <div className="container mx-auto flex items-center justify-between px-4">
           <h1 className="text-lg font-bold">First Gate Travels</h1>
-          <h1>{user?.email}</h1>
+          {/* <h1>{user?.email}</h1> */}
           <button className="bg-yellow-500 text-black px-4 py-2 rounded">Sign in</button>
         </div>
       </header>

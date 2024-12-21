@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import FilterBar from '@/components/FilterBar';
 import CarList from '@/components/CarList';
+import SearchBar from '@/components/SearchBar';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../app/firebase/config';
 import { signOut } from 'firebase/auth';
@@ -58,13 +59,14 @@ export default function Home() {
         </div>
       </header>
 
+      {/*Search Bar Section */}
+      <SearchBar />
+
       {/* Filters Section */}
       <FilterBar />
 
       {/* Car List Section */}
-      <section className="container mx-auto mt-6 px-4">
-        <CarList />
-      </section>
+      <CarList />
     </main>
   );
 }

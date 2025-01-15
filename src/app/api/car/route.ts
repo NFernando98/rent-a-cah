@@ -2,34 +2,74 @@ import { NextResponse } from "next/server";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/app/firebase/config";
 
-// Get all cars documents
-export async function GET(request: any) {
-    try {
-        console.log("Fetching Cars collection from Firestore...");
-        const carsRef = collection(db, "Cars"); // Reference to Cars collection
-        const snapshot = await getDocs(carsRef); // Fetch all documents in Cars
+export async function GET(req: Request) {
+  const url = new URL(req.url);
+  const pickUpDate = url.searchParams.get("pickUpDate");
+  const dropOffDate = url.searchParams.get("dropOffDate");
 
-        // Check if there are any documents in the snapshot
-        if (snapshot.empty) {
-            console.log("No documents found in Cars collection.");
-            return NextResponse.json({ message: "No cars found" }, { status: 404 });
-        }
+  if (!pickUpDate || !dropOffDate) {
+    console.error("Pick-up and Drop-off dates are required");
+    return NextResponse.json(
+      { error: "Pick-up and Drop-off dates are required" },
+      { status: 400 }
+    );
+  }
 
-        // Map through the documents and prepare the response
-        const cars = snapshot.docs.map((doc) => ({
-            id: doc.id, // Include the document ID
-            ...doc.data(), // Include document fields
-        }));
+  try {
+    // Parse and normalize the dates (ignoring the time part)
+    const pickUp = new Date(pickUpDate);
+    const dropOff = new Date(dropOffDate);
+    pickUp.setHours(0, 0, 0, 0); // Set time to 00:00 for pickUp
+    dropOff.setHours(0, 0, 0, 0); // Set time to 00:00 for dropOff
 
-        console.log("Cars fetched successfully:", cars);
-        return NextResponse.json(cars); // Return cars data as JSON
-    } catch (error: any) {
-        console.error("Error fetching Cars:", error.message);
-        return NextResponse.json(
-            { error: "Failed to fetch Cars", details: error.message },
-            { status: 500 }
-        );
+    console.log(
+      `Filtering cars from ${pickUp.toISOString()} to ${dropOff.toISOString()}`
+    );
+
+    const carsRef = collection(db, "Cars");
+    const snapshot = await getDocs(carsRef);
+
+    if (snapshot.empty) {
+      console.log("No cars found in Cars collection.");
+      return NextResponse.json({ message: "No cars found" }, { status: 404 });
     }
-}
 
-// Get car documents that are available
+    // Filter available cars based on the dates
+    const availableCars = snapshot.docs.filter((doc) => {
+      const car = doc.data();
+      const carAvailableDates = car.availablePeriod || []; // Access "Available" field directly
+
+      return carAvailableDates.some((date: any) => {
+        const availableDate = new Date(date.seconds * 1000); // Convert Firestore timestamp to Date
+        availableDate.setHours(0, 0, 0, 0); // Normalize to midnight for comparison
+
+        // Check if the available date falls within the range [pickUpDate, dropOffDate]
+        return availableDate >= pickUp && availableDate <= dropOff;
+      });
+    });
+
+    // If no cars are available, return a 404 response
+    if (availableCars.length === 0) {
+      console.log("No cars available for the selected dates");
+      return NextResponse.json(
+        { message: "No cars available for the selected dates" },
+        { status: 404 }
+      );
+    }
+
+    // Map available cars to return relevant data (e.g., name, price, id)
+    const cars = availableCars.map((doc) => ({
+      id: doc.id,
+      name: doc.data().Name, // Include car name
+    }));
+
+    // Return the available cars as the response
+    return NextResponse.json(cars);
+  } catch (error) {
+    console.error("Error fetching cars:", error);
+    return NextResponse.json(
+      { error: "Internal server error", details: error.message },
+      { status: 500 }
+    );
+  }
+}

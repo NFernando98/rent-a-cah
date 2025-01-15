@@ -14,16 +14,36 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { cn } from '@/lib/utils';
 
 const SearchBar = () => {
   // Initialize with current date
   const [pickUpDate, setPickUpDate] = React.useState<Date>(new Date());
-  
+
   // Initialize drop-off date as tomorrow
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const [dropOffDate, setDropOffDate] = React.useState<Date>(tomorrow);
+  const [dropOffDate, setDropOffDate] = React.useState<Date>(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow;
+  });
+
+  const fetchAvailableCars = async () => {
+    try {
+      const response = await fetch(
+        `/api/car?pickUpDate=${pickUpDate.toISOString()}&dropOffDate=${dropOffDate.toISOString()}`,
+        { method: 'GET' }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch cars. Status: ${response.status}`);
+      }
+
+      const cars = await response.json();
+      console.log('Available Cars:', cars);
+    } catch (error) {
+      console.error('Error fetching available cars:', error);
+    }
+  };
+
 
   return (
     <div className="flex flex-wrap gap-4 items-center justify-center p-6">
@@ -132,7 +152,8 @@ const SearchBar = () => {
       </Select>
 
       {/* Search Button */}
-      <Button className="w-32 h-16 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold text-lg">
+      <Button onClick={fetchAvailableCars}
+        className="w-32 h-16 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold text-lg">
         Search
       </Button>
     </div>

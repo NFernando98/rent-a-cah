@@ -4,9 +4,21 @@ import FilterBar from '@/components/FilterBar';
 import CarList from '@/components/CarList';
 import SearchBar from '@/components/SearchBar';
 import { useAuthState } from 'react-firebase-hooks/auth';
+
+type FirestoreTimestamp = {
+  seconds: number;
+  nanoseconds: number;
+};
 import { auth } from '../app/firebase/config';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
+
+type Car = {
+  id: string;
+  name: string;
+  price: number;
+  availablePeriod: { seconds: number; nanoseconds: number }[];
+};
 
 export default function Home() {
   const [user] = useAuthState(auth);
@@ -22,26 +34,6 @@ export default function Home() {
     }
   };
 
-  useEffect(() => {
-    const fetchCars = async () => {
-      try {
-        const response = await fetch('/api/car/', {
-          method: 'GET',
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json(); // Parse the JSON response
-        console.log("this is the data", data)
-        
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchCars();
-  }, []); // Empty dependency array to run once on mount
 
   return (
     <main className="bg-gray-100 min-h-screen">

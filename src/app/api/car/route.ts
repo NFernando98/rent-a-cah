@@ -8,7 +8,6 @@ export async function GET(req: Request) {
   const dropOffDate = url.searchParams.get("dropOffDate");
 
   if (!pickUpDate || !dropOffDate) {
-    console.error("Pick-up and Drop-off dates are required");
     return NextResponse.json(
       { error: "Pick-up and Drop-off dates are required" },
       { status: 400 }
@@ -16,54 +15,52 @@ export async function GET(req: Request) {
   }
 
   try {
-    // Parse and normalize the dates (ignoring the time part)
+    // Parse input dates
     const pickUp = new Date(pickUpDate);
     const dropOff = new Date(dropOffDate);
-    pickUp.setHours(0, 0, 0, 0); // Set time to 00:00 for pickUp
-    dropOff.setHours(0, 0, 0, 0); // Set time to 00:00 for dropOff
 
-    console.log(
-      `Filtering cars from ${pickUp.toISOString()} to ${dropOff.toISOString()}`
-    );
+    console.log(pickUp, dropOff);
 
     const carsRef = collection(db, "Cars");
     const snapshot = await getDocs(carsRef);
 
     if (snapshot.empty) {
-      console.log("No cars found in Cars collection.");
       return NextResponse.json({ message: "No cars found" }, { status: 404 });
     }
 
-    // Filter available cars based on the dates
+    // Find cars that are available in the requested date range
     const availableCars = snapshot.docs.filter((doc) => {
       const car = doc.data();
-      const carAvailableDates = car.availablePeriod || []; // Access "Available" field directly
+      const periods = car.availablePeriod || [];
 
-      return carAvailableDates.some((date: any) => {
-        const availableDate = new Date(date.seconds * 1000); // Convert Firestore timestamp to Date
-        availableDate.setHours(0, 0, 0, 0); // Normalize to midnight for comparison
+      // Check if any period overlaps with the requested dates
+      return periods.some((period: any) => {
+        const startDate = new Date(period.startDate.seconds * 1000);
+        const endDate = new Date(period.endDate.seconds * 1000);
 
-        // Check if the available date falls within the range [pickUpDate, dropOffDate]
-        return availableDate >= pickUp && availableDate <= dropOff;
+        // Logic: The requested period should fully fit within the available period
+        console.log("Requested pickUpDate:", pickUp);
+        console.log("Requested dropOffDate:", dropOff);
+        console.log("Car availability period:", startDate, "to", endDate);
+
+        return pickUp < endDate && dropOff > startDate;
       });
     });
 
-    // If no cars are available, return a 404 response
     if (availableCars.length === 0) {
-      console.log("No cars available for the selected dates");
       return NextResponse.json(
         { message: "No cars available for the selected dates" },
         { status: 404 }
       );
     }
 
-    // Map available cars to return relevant data (e.g., name, price, id)
+    // Return the available cars with necessary fields
     const cars = availableCars.map((doc) => ({
       id: doc.id,
-      name: doc.data().Name, // Include car name
+      name: doc.data().name,
+      image: doc.data().image,  // Add image field
     }));
 
-    // Return the available cars as the response
     return NextResponse.json(cars);
   } catch (error) {
     console.error("Error fetching cars:", error);

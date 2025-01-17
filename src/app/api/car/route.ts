@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/app/firebase/config";
 
+// Get available cars for the requested dates
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const pickUpDate = url.searchParams.get("pickUpDate");

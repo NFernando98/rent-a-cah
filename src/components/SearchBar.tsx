@@ -14,8 +14,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useRouter } from 'next/navigation';
 
 const SearchBar = () => {
+  const router = useRouter();
+
   // Initialize with current date
   const [pickUpDate, setPickUpDate] = React.useState<Date>(new Date());
 
@@ -27,21 +30,13 @@ const SearchBar = () => {
   });
 
   const fetchAvailableCars = async () => {
-    try {
-      const response = await fetch(
-        `/api/car?pickUpDate=${pickUpDate.toISOString()}&dropOffDate=${dropOffDate.toISOString()}`,
-        { method: 'GET' }
-      );
+    const pickUpDateStr = pickUpDate.toISOString();
+    const dropOffDateStr = dropOffDate.toISOString();
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch cars. Status: ${response.status}`);
-      }
-
-      const cars = await response.json();
-      console.log('Available Cars:', cars);
-    } catch (error) {
-      console.error('Error fetching available cars:', error);
-    }
+    // Redirect to the `select-car` page with query parameters
+    router.push(
+      `/select-car?pickUpDate=${encodeURIComponent(pickUpDateStr)}&dropOffDate=${encodeURIComponent(dropOffDateStr)}`
+    );
   };
 
 
@@ -129,27 +124,6 @@ const SearchBar = () => {
         </SelectContent>
       </Select>
 
-      {/* Drop-off Time */}
-      <Select defaultValue="10:30">
-        <SelectTrigger className="w-64 h-16 bg-white">
-          <div className="flex flex-col items-start">
-            <span className="text-sm text-gray-500">Drop-off time</span>
-            <SelectValue className="text-lg" />
-          </div>
-        </SelectTrigger>
-        <SelectContent>
-          {Array.from({ length: 48 }).map((_, i) => {
-            const hour = Math.floor(i / 2);
-            const minute = i % 2 === 0 ? '00' : '30';
-            const time = `${hour.toString().padStart(2, '0')}:${minute}`;
-            return (
-              <SelectItem key={time} value={time} className="text-base">
-                {time}
-              </SelectItem>
-            );
-          })}
-        </SelectContent>
-      </Select>
 
       {/* Search Button */}
       <Button onClick={fetchAvailableCars}

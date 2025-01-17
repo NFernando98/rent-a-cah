@@ -105,12 +105,10 @@ const CarCard = ({ car }: { car: any }) => {
             <AccordionTrigger className="p-4 flex items-center justify-between gap-4 w-full">
                 {/* Car Image */}
                 <div className="w-1/4 max-w-[200px]">
-                    <Image
-                        src="/bmw.png" // Temporary image placeholder
+                    <img
+                        src="https://via.placeholder.com/300x200" // Temporary image placeholder
                         alt={car.name}
-                        width={300}
-                        height={200}
-                        className="rounded-lg object-cover"
+                        className="h-[100px] w-full object-cover rounded-lg"
                     />
                 </div>
 
@@ -122,17 +120,18 @@ const CarCard = ({ car }: { car: any }) => {
                     {car.mileage && <p className="text-gray-600 text-sm">🛣️ {car.mileage}</p>}
                 </div>
 
-                {/* Price and Reserve Button */}
+                {/* Price and Reserve Action */}
                 <div className="w-1/4 text-center flex flex-col justify-center items-center">
                     {car.price && (
                         <span className="text-xl font-semibold mb-2">CA ${car.price}</span>
                     )}
-                    <button
+                    {/* Change button to div or span */}
+                    <div
                         onClick={() => handleReserve(car)}
-                        className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-4 rounded text-sm"
+                        className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-4 rounded cursor-pointer text-sm"
                     >
                         Reserve
-                    </button>
+                    </div>
                 </div>
             </AccordionTrigger>
 

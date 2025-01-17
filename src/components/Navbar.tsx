@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/app/firebase/config';
 import { signOut } from 'firebase/auth';
@@ -23,13 +23,24 @@ export default function Navbar() {
         <header className="bg-black text-white py-4">
             <div className="container mx-auto flex items-center justify-between px-4">
                 <h1 className="text-lg font-bold">Rent a Cah</h1>
-                <h1>{user?.email}</h1>
-                <button
-                    className="bg-yellow-500 text-black px-4 py-2 rounded"
-                    onClick={handleLogout}
-                >
-                    Log out
-                </button>
+                {user ? (
+                    <>
+                        <h1>{user.email}</h1>
+                        <button
+                            className="bg-yellow-500 text-black px-4 py-2 rounded"
+                            onClick={handleLogout}
+                        >
+                            Log out
+                        </button>
+                    </>
+                ) : (
+                    <button
+                        className="bg-yellow-500 text-black px-4 py-2 rounded"
+                        onClick={() => router.push('/sign-up')}
+                    >
+                        Log in
+                    </button>
+                )}
             </div>
         </header>
     );

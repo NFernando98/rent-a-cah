@@ -105,9 +105,11 @@ const CarCard = ({ car }: { car: any }) => {
             <AccordionTrigger className="p-4 flex items-center justify-between gap-4 w-full">
                 {/* Car Image */}
                 <div className="w-1/4 max-w-[200px]">
-                    <img
-                        src="https://via.placeholder.com/300x200" // Temporary image placeholder
+                    <Image
+                        src="" // Temporary image placeholder
                         alt={car.name}
+                        width={300}
+                        height={200}
                         className="h-[100px] w-full object-cover rounded-lg"
                     />
                 </div>
